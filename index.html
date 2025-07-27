@@ -1,0 +1,915 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pickup Cabs | Car Rental</title>
+    <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #0a0a0f;
+            color: #f0f0f0;
+            line-height: 1.6;
+        }
+
+        header {
+            background: url('./img/intro.avif') center/cover no-repeat;
+            text-align: center;
+            padding: 2.5rem 1rem;
+            color: #fff;
+            position: relative;
+        }
+
+        header::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.5);
+            /* dark overlay for readability */
+            z-index: 0;
+        }
+
+        header h1,
+        header p {
+            position: relative;
+            z-index: 1;
+        }
+
+
+        nav {
+            background: #121212;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 1.5rem;
+            position: sticky;
+            top: 0;
+            z-index: 999;
+        }
+
+        nav .logo {
+            font-weight: bold;
+            font-size: 1.5rem;
+            color: gold;
+        }
+
+        #nav-links {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        nav a {
+            color: #ddd;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        nav a:hover {
+            color: gold;
+        }
+
+        #menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 1.5rem;
+        }
+
+        @media (max-width: 768px) {
+            #nav-links {
+                display: none;
+                flex-direction: column;
+                position: absolute;
+                top: 60px;
+                left: 0;
+                background: #121212;
+                width: 100%;
+                padding: 1rem 0;
+            }
+
+            #nav-links.active {
+                display: flex;
+            }
+
+            #menu-toggle {
+                display: block;
+            }
+        }
+
+        section {
+            padding: 2rem 1rem;
+            max-width: 1200px;
+            margin: auto;
+        }
+
+        h2 {
+            font-size: 1.8rem;
+            color: gold;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .car-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .car-card {
+            background: #1a1a2e;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+            transition: transform 0.3s;
+        }
+
+        .car-card:hover {
+            transform: scale(1.02);
+        }
+
+        .car-card img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+        }
+
+        .car-card .info {
+            padding: 1rem;
+        }
+
+        .car-card h3 {
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+            color: #fff;
+        }
+
+        .car-card p {
+            color: #ccc;
+            font-size: 1.1rem;
+        }
+
+        .book-btn {
+            margin-top: 0.8rem;
+            background: #e8b923;
+            color: #000;
+            padding: 0.6rem 1rem;
+            border-radius: 6px;
+            text-decoration: none;
+            display: inline-block;
+            font-weight: bold;
+            cursor: pointer;
+            border: none;
+            transition: background 0.3s;
+        }
+
+        .book-btn:hover {
+            background: #d4a910;
+        }
+
+        input[type="text"],
+        input[type="tel"],
+        input[type="date"] {
+            width: 100%;
+            padding: 0.8rem;
+            margin: 0.5rem 0;
+            border-radius: 8px;
+            border: none;
+            font-size: 1rem;
+        }
+
+        input.error {
+            border: 2px solid red !important;
+        }
+
+        #carSearch {
+            margin-bottom: 1.5rem;
+        }
+
+        #popupOverlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            z-index: 999;
+        }
+
+        #popupOverlay.active {
+            display: block;
+        }
+
+        #bookingPopup {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: #1a1a2e;
+            padding: 2rem;
+            border-top-left-radius: 20px;
+            border-top-right-radius: 20px;
+            z-index: 1000;
+        }
+
+        #closePopup {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: red;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        #goTopBtn {
+            position: fixed;
+            bottom: 30px;
+            right: 20px;
+            background: #e8b923;
+            color: #000;
+            border: none;
+            padding: 12px;
+            border-radius: 50%;
+            font-size: 18px;
+            cursor: pointer;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(20px);
+            transition: all 0.4s ease;
+        }
+
+        #goTopBtn.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .blue-btn {
+            background: #007bff;
+            color: #fff;
+            padding: 0.7rem 1.2rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.3s;
+            width: 100%;
+            margin-top: 1rem;
+        }
+
+        .blue-btn:hover {
+            background: #0056b3;
+        }
+
+        .car-image-slider {
+            position: relative;
+            width: 100%;
+            overflow: hidden;
+            border-radius: 10px;
+        }
+
+        .car-image {
+            width: 100%;
+            display: none;
+            border-radius: 10px;
+            transition: opacity 0.3s ease-in-out;
+        }
+
+        .car-image.active {
+            display: block;
+        }
+
+        .nav-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(0, 0, 0, 0.6);
+            color: white;
+            border: none;
+            font-size: 1.5rem;
+            padding: 0.3rem 0.6rem;
+            cursor: pointer;
+            z-index: 1;
+            border-radius: 50%;
+        }
+
+        .prev {
+            left: 10px;
+        }
+
+        .next {
+            right: 10px;
+        }
+
+        #imagePopupOverlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+
+        #imagePopupOverlay.active {
+            display: flex;
+        }
+
+        #imagePopupContent {
+            position: relative;
+            max-width: 90%;
+            max-height: 90%;
+        }
+
+        #popupImage {
+            width: 100%;
+            max-height: 80vh;
+            object-fit: contain;
+            border-radius: 12px;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+        }
+
+        #closeImagePopup {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            background: red;
+            color: white;
+            border: none;
+            font-size: 20px;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            cursor: pointer;
+        }
+
+        #stats {
+            text-align: center;
+            padding: 3rem 1rem 2rem;
+            background: #101018;
+            border-bottom: 1px solid #333;
+            margin-bottom: 2rem;
+        }
+
+        .stats-container {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            gap: 2rem;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .stat-box {
+            background: #1a1a2e;
+            padding: 1.5rem 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+            min-width: 200px;
+            flex: 1;
+            transition: transform 0.3s;
+        }
+
+        .stat-box:hover {
+            transform: scale(1.05);
+        }
+
+        .stat-box h3 {
+            font-size: 2.5rem;
+            color: gold;
+            margin-bottom: 0.3rem;
+        }
+
+        .stat-box p {
+            font-size: 1.1rem;
+            color: #ccc;
+        }
+
+        #whyChoose {
+            /* background: #f9f9f9; */
+            padding: 3rem 1rem;
+            text-align: center;
+        }
+
+        #whyChoose h2 {
+            font-size: 2rem;
+            color: gold;
+            margin-bottom: 2rem;
+        }
+
+        .why-container {
+            max-width: 800px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .why-box {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            /* background: #fff; */
+            padding: 1rem 1.2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            transition: transform 0.2s;
+        }
+
+        .why-box:hover {
+            transform: translateY(-2px);
+        }
+
+        .why-icon {
+            font-size: 1.8rem;
+            /* background: #e0e0e0; */
+            color: gold;
+            border-radius: 50%;
+            padding: 0.6rem;
+            width: 3rem;
+            height: 3rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .why-content h3 {
+            margin: 0;
+            font-size: 1.2rem;
+            color: gold;
+            font-weight: bold;
+        }
+
+        .why-content p {
+            margin: 0.3rem 0 0;
+            font-size: 0.95rem;
+            color: #fff;
+        }
+
+        #customerRatings {
+            /* background: #fff; */
+            padding: 3rem 1rem;
+            text-align: center;
+            color: #111;
+        }
+
+        #customerRatings h2 {
+            font-size: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .ratings-container {
+            display: flex;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+            justify-content: center;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .rating-box {
+            background: #f4f4f4;
+            padding: 1.5rem;
+            border-radius: 12px;
+            width: 300px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease;
+        }
+
+        .rating-box:hover {
+            transform: translateY(-5px);
+        }
+
+        .stars {
+            font-size: 1.2rem;
+            color: gold;
+            margin-bottom: 0.5rem;
+        }
+
+        .rating-box p {
+            font-size: 0.95rem;
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+
+        .rating-box h4 {
+            margin: 0;
+            font-weight: bold;
+            color: #444;
+        }
+
+        .cars-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        @media (min-width: 768px) {
+            .cars-grid {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 2rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <header data-aos="fade-down">
+        <h1>Pickup Cabs Car Rentals</h1>
+        <p>Book your ride easily via WhatsApp</p>
+    </header>
+
+    <nav>
+        <span class="logo">Pickup Cabs</span>
+        <button id="menu-toggle">☰</button>
+        <div id="nav-links">
+            <a href="#home">Home</a>
+            <a href="#cars">Cars</a>
+            <a href="#contact">Contact</a>
+        </div>
+    </nav>
+
+    <section id="home" data-aos="fade-up">
+        <h2>Welcome to Pickup Cabs</h2>
+        <p style="text-align:center">We provide affordable, high-quality car rentals. Choose your car, message us on
+            WhatsApp, and drive away with ease.</p>
+    </section>
+
+    <section id="stats" data-aos="fade-up">
+        <h2>Our Impact</h2>
+        <div class="stats-container">
+            <div class="stat-box">
+                <h3><span class="counter" data-target="1200">0</span>+</h3>
+                <p>Happy Customers</p>
+            </div>
+            <div class="stat-box">
+                <h3><span class="counter" data-target="75">0</span>+</h3>
+                <p>Vehicles Available</p>
+            </div>
+            <div class="stat-box">
+                <h3><span class="counter" data-target="15">0</span>+</h3>
+                <p>Service Locations</p>
+            </div>
+        </div>
+    </section>
+
+
+    <section id="cars">
+        <h2 data-aos="fade-right">Available Cars</h2>
+        <input type="text" id="carSearch" placeholder="Search cars...">
+
+        <div class="cars-grid">
+            <div class="car-card" data-name="Toyota Innova">
+                <div class="car-image-slider">
+                    <img class="car-image active" src="./img/toyato.jpg" alt="Toyota Innova">
+                    <button class="nav-btn prev" onclick="prevImage(this)">❮</button>
+                    <button class="nav-btn next" onclick="nextImage(this)">❯</button>
+                    <span class="popular-badge">🔥 Most Popular</span>
+                </div>
+                <div class="info">
+                    <h3>Toyota Innova</h3>
+                    <p>₹5000/day</p>
+                    <button class="book-btn" onclick="openBookingForm('Toyota Innova')">Book Now</button>
+                </div>
+            </div>
+
+            <div class="car-card" data-name="Ertiga">
+                <div class="car-image-slider">
+                    <img class="car-image active" src="./img/Ertiga.jpg" alt="Ertiga">
+                    <button class="nav-btn prev" onclick="prevImage(this)">❮</button>
+                    <button class="nav-btn next" onclick="nextImage(this)">❯</button>
+                </div>
+                <div class="info">
+                    <h3>Ertiga</h3>
+                    <p>₹1000/day</p>
+                    <button class="book-btn" onclick="openBookingForm('Ertiga')">Book Now</button>
+                </div>
+            </div>
+
+            <div class="car-card" data-name="Baleno">
+                <div class="car-image-slider">
+                    <img class="car-image active" src="./img/Baleno.jpg" alt="Baleno">
+                    <button class="nav-btn prev" onclick="prevImage(this)">❮</button>
+                    <button class="nav-btn next" onclick="nextImage(this)">❯</button>
+                </div>
+                <div class="info">
+                    <h3>Baleno</h3>
+                    <p>₹1000/day</p>
+                    <button class="book-btn" onclick="openBookingForm('Baleno')">Book Now</button>
+                </div>
+            </div>
+
+            <div class="car-card" data-name="Swift Dzire">
+                <div class="car-image-slider">
+                    <img class="car-image active" src="./img/SwiftDzire.jpg" alt="Swift Dzire">
+                    <button class="nav-btn prev" onclick="prevImage(this)">❮</button>
+                    <button class="nav-btn next" onclick="nextImage(this)">❯</button>
+                </div>
+                <div class="info">
+                    <h3>Swift Dzire</h3>
+                    <p>₹1000/day</p>
+                    <button class="book-btn" onclick="openBookingForm('Swift Dzire')">Book Now</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div id="popupOverlay">
+        <div id="bookingPopup">
+            <button id="closePopup">✖</button>
+            <h3>Book Car: <span id="selectedCarName"></span></h3>
+            <input type="text" id="custName" placeholder="Your Name">
+            <input type="tel" id="custPhone" placeholder="Mobile Number">
+            <input type="date" id="pickupDate">
+            <input type="date" id="dropDate">
+            <button class="blue-btn" onclick="confirmBooking()">Confirm</button>
+        </div>
+    </div>
+
+    <section id="whyChoose" data-aos="fade-up">
+        <h2>Why Choose Pickup Cabs?</h2>
+        <div class="why-container">
+            <div class="why-box">
+                <div class="why-icon">✅</div>
+                <div class="why-content">
+                    <h3>Well-Maintained Fleet</h3>
+                    <p>All our vehicles undergo regular maintenance and safety checks.</p>
+                </div>
+            </div>
+            <div class="why-box">
+                <div class="why-icon">⏰</div>
+                <div class="why-content">
+                    <h3>24/7 Availability</h3>
+                    <p>Pickup and drop available anytime, anywhere.</p>
+                </div>
+            </div>
+            <div class="why-box">
+                <div class="why-icon">💰</div>
+                <div class="why-content">
+                    <h3>Affordable Rates</h3>
+                    <p>Competitive pricing with no hidden charges.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <section id="customerRatings" data-aos="fade-up">
+        <h2>What Our Customers Say</h2>
+        <div class="ratings-container">
+            <div class="rating-box">
+                <div class="stars">⭐⭐⭐⭐⭐</div>
+                <p>"Amazing service! The car was clean and the pickup process was quick."</p>
+                <h4>- Priya S.</h4>
+            </div>
+            <div class="rating-box">
+                <div class="stars">⭐⭐⭐⭐</div>
+                <p>"Affordable rates and smooth booking experience. Highly recommend!"</p>
+                <h4>- Arjun K.</h4>
+            </div>
+            <div class="rating-box">
+                <div class="stars">⭐⭐⭐⭐⭐</div>
+                <p>"I rented a car at midnight and they were ready — super reliable!"</p>
+                <h4>- Meena R.</h4>
+            </div>
+        </div>
+    </section>
+
+
+
+    <div id="imagePopupOverlay">
+        <div id="imagePopupContent">
+            <button id="closeImagePopup">✖</button>
+            <img id="popupImage" src="" alt="Car Image">
+        </div>
+    </div>
+
+    <button id="goTopBtn" title="Go to top">↑</button>
+
+    <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+    <script>
+        AOS.init({ duration: 1000 });
+
+        const toggleBtn = document.getElementById('menu-toggle');
+        const navLinks = document.getElementById('nav-links');
+        const goTopBtn = document.getElementById('goTopBtn');
+
+        toggleBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            navLinks.classList.toggle('active');
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!navLinks.contains(e.target) && !toggleBtn.contains(e.target)) {
+                navLinks.classList.remove('active');
+            }
+        });
+
+        window.addEventListener('scroll', () => {
+            goTopBtn.classList.toggle('show', window.scrollY > 300);
+        });
+
+        goTopBtn.addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+        document.getElementById('carSearch').addEventListener('input', function () {
+            const searchTerm = this.value.toLowerCase();
+            document.querySelectorAll('.car-card').forEach(card => {
+                const name = card.getAttribute('data-name').toLowerCase();
+                card.style.display = name.includes(searchTerm) ? 'block' : 'none';
+            });
+        });
+
+        let selectedCar = '';
+
+        function setDefaultDates() {
+            const today = new Date();
+            const tomorrow = new Date(today);
+            tomorrow.setDate(today.getDate() + 1);
+
+            const format = (d) => d.toISOString().split('T')[0];
+            document.getElementById('pickupDate').value = format(today);
+            document.getElementById('dropDate').value = format(tomorrow);
+        }
+
+        function resetPopupForm() {
+            document.getElementById('custName').value = '';
+            document.getElementById('custPhone').value = '';
+            document.getElementById('custPhone').classList.remove('error');
+            document.getElementById('pickupDate').classList.remove('error');
+            document.getElementById('dropDate').classList.remove('error');
+            setDefaultDates();
+        }
+
+        function openBookingForm(carName) {
+            selectedCar = carName;
+            document.getElementById('selectedCarName').innerText = carName;
+            resetPopupForm();
+            document.getElementById('popupOverlay').classList.add('active');
+        }
+
+        function confirmBooking() {
+            const phoneInput = document.getElementById('custPhone');
+            const pickupInput = document.getElementById('pickupDate');
+            const dropInput = document.getElementById('dropDate');
+            const name = document.getElementById('custName').value.trim();
+            const phone = phoneInput.value.trim();
+            const pickup = pickupInput.value;
+            const drop = dropInput.value;
+            const phonePattern = /^\d{10}$/;
+
+            let hasError = false;
+
+            phoneInput.classList.remove('error');
+            pickupInput.classList.remove('error');
+            dropInput.classList.remove('error');
+
+            if (!phonePattern.test(phone)) {
+                phoneInput.classList.add('error');
+                hasError = true;
+            }
+
+            if (!pickup) {
+                pickupInput.classList.add('error');
+                hasError = true;
+            }
+
+            if (!drop) {
+                dropInput.classList.add('error');
+                hasError = true;
+            }
+
+            if (hasError) return;
+
+            const message = `Booking Request:%0aName: ${name}%0aMobile: ${phone}%0aCar: ${selectedCar}%0aPickup: ${pickup}%0aDrop: ${drop}`;
+            window.open(`https://wa.me/919025784470?text=${message}`, '_blank');
+            document.getElementById('popupOverlay').classList.remove('active');
+            resetPopupForm();
+        }
+        // Image navigation
+        function nextImage(btn) {
+            const images = btn.parentElement.querySelectorAll('.car-image');
+            const activeIndex = [...images].findIndex(img => img.classList.contains('active'));
+            images[activeIndex].classList.remove('active');
+            const nextIndex = (activeIndex + 1) % images.length;
+            images[nextIndex].classList.add('active');
+        }
+
+        function prevImage(btn) {
+            const images = btn.parentElement.querySelectorAll('.car-image');
+            const activeIndex = [...images].findIndex(img => img.classList.contains('active'));
+            images[activeIndex].classList.remove('active');
+            const prevIndex = (activeIndex - 1 + images.length) % images.length;
+            images[prevIndex].classList.add('active');
+        }
+
+        // Counter animation
+        function animateCounters() {
+            const counters = document.querySelectorAll('.counter');
+            counters.forEach(counter => {
+                const target = +counter.getAttribute('data-target');
+                const increment = target / 100;
+                let current = 0;
+
+                const updateCounter = () => {
+                    if (current < target) {
+                        current += increment;
+                        counter.innerText = Math.ceil(current);
+                        requestAnimationFrame(updateCounter);
+                    } else {
+                        counter.innerText = target;
+                    }
+                };
+                updateCounter();
+            });
+        }
+
+        // Trigger animation when #stats is in view
+        function handleStatsAnimation() {
+            const statsSection = document.getElementById('stats');
+            const observer = new IntersectionObserver((entries, obs) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        animateCounters();
+                        obs.disconnect(); // only animate once
+                    }
+                });
+            }, { threshold: 0.5 });
+
+            observer.observe(statsSection);
+        }
+
+        document.addEventListener('DOMContentLoaded', handleStatsAnimation);
+
+
+        // Show image popup on image click
+        document.querySelectorAll('.car-image').forEach(img => {
+            img.addEventListener('click', () => {
+                const popupOverlay = document.getElementById('imagePopupOverlay');
+                const popupImage = document.getElementById('popupImage');
+                popupImage.src = img.src;
+                popupOverlay.classList.add('active');
+            });
+        });
+
+        // Close image popup
+        document.getElementById('closeImagePopup').addEventListener('click', () => {
+            document.getElementById('imagePopupOverlay').classList.remove('active');
+        });
+        // Close popup on clicking outside
+        document.getElementById('imagePopupOverlay').addEventListener('click', (e) => {
+            if (e.target.id === 'imagePopupOverlay') {
+                e.currentTarget.classList.remove('active');
+            }
+        });
+
+
+        // Hide nav buttons if only one image
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('.car-image-slider').forEach(slider => {
+                const images = slider.querySelectorAll('.car-image');
+                if (images.length <= 1) {
+                    slider.querySelectorAll('.nav-btn').forEach(btn => btn.style.display = 'none');
+                }
+            });
+        });
+
+        document.getElementById('closePopup').addEventListener('click', () => {
+            document.getElementById('popupOverlay').classList.remove('active');
+            resetPopupForm();
+        });
+
+        document.getElementById('popupOverlay').addEventListener('click', (e) => {
+            if (e.target.id === 'popupOverlay') {
+                document.getElementById('popupOverlay').classList.remove('active');
+                resetPopupForm();
+            }
+        });
+
+        window.openBookingForm = openBookingForm;
+        window.confirmBooking = confirmBooking;
+    </script>
+</body>
+
+</html>
