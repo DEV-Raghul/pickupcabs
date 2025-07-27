@@ -29,6 +29,7 @@
             padding: 2.5rem 1rem;
             color: #fff;
             position: relative;
+            height: 50vh;
         }
 
         header::before {
@@ -90,6 +91,16 @@
         }
 
         @media (max-width: 768px) {
+
+            header {
+                background: url('./img/intro.avif') center/cover no-repeat;
+                text-align: center;
+                padding: 2.5rem 1rem;
+                color: #fff;
+                position: relative;
+                height: 40vh;
+            }
+
             #nav-links {
                 display: none;
                 flex-direction: column;
@@ -543,6 +554,10 @@
     <header data-aos="fade-down">
         <h1>Pickup Cabs Car Rentals</h1>
         <p>Book your ride easily via WhatsApp</p>
+
+        <div style="width: 100% !important; color: #000;margin-top: 9px; display: flex; justify-content: center;">
+            <h4 style="background-color: #ffffff !important;  padding: 0 4px; border-radius: 25px;">Call: 63699 39541</h4>
+        </div>
     </header>
 
     <nav>
@@ -591,11 +606,11 @@
                     <img class="car-image active" src="./img/toyato.jpg" alt="Toyota Innova">
                     <button class="nav-btn prev" onclick="prevImage(this)">❮</button>
                     <button class="nav-btn next" onclick="nextImage(this)">❯</button>
-                    <span class="popular-badge">🔥 Most Popular</span>
+                    <!-- <span class="popular-badge">🔥 Most Popular</span> -->
                 </div>
                 <div class="info">
                     <h3>Toyota Innova</h3>
-                    <p>₹5000/day</p>
+                    <p>₹4000/day</p>
                     <div class="book-btn-wrapper">
                         <button class="book-btn" onclick="openBookingForm('Toyota Innova')">Book Now</button>
                     </div>
@@ -610,7 +625,7 @@
                 </div>
                 <div class="info">
                     <h3>Ertiga</h3>
-                    <p>₹1000/day</p>
+                    <p>₹3500/day</p>
                     <div class="book-btn-wrapper">
                         <button class="book-btn" onclick="openBookingForm('Ertiga')">Book Now</button>
                     </div>
@@ -625,7 +640,7 @@
                 </div>
                 <div class="info">
                     <h3>Baleno</h3>
-                    <p>₹1000/day</p>
+                    <p>₹2500/day</p>
                     <div class="book-btn-wrapper">
                         <button class="book-btn" onclick="openBookingForm('Baleno')">Book Now</button>
                     </div>
@@ -640,9 +655,51 @@
                 </div>
                 <div class="info">
                     <h3>Swift Dzire</h3>
-                    <p>₹1000/day</p>
+                    <p>₹2500/day</p>
                     <div class="book-btn-wrapper">
                         <button class="book-btn" onclick="openBookingForm('Swift Dzire')">Book Now</button>
+                    </div>
+                </div>
+            </div>
+            <div class="car-card" data-name="Swift">
+                <div class="car-image-slider">
+                    <img class="car-image active" src="./img/Swift.jpg" alt="Swift">
+                    <button class="nav-btn prev" onclick="prevImage(this)">❮</button>
+                    <button class="nav-btn next" onclick="nextImage(this)">❯</button>
+                </div>
+                <div class="info">
+                    <h3>Swift</h3>
+                    <p>₹2500/day</p>
+                    <div class="book-btn-wrapper">
+                        <button class="book-btn" onclick="openBookingForm('Swift')">Book Now</button>
+                    </div>
+                </div>
+            </div>
+            <div class="car-card" data-name="I20">
+                <div class="car-image-slider">
+                    <img class="car-image active" src="./img/I20.jpg" alt="I20">
+                    <button class="nav-btn prev" onclick="prevImage(this)">❮</button>
+                    <button class="nav-btn next" onclick="nextImage(this)">❯</button>
+                </div>
+                <div class="info">
+                    <h3>I20</h3>
+                    <p>₹2500/day</p>
+                    <div class="book-btn-wrapper">
+                        <button class="book-btn" onclick="openBookingForm('I20')">Book Now</button>
+                    </div>
+                </div>
+            </div>
+            <div class="car-card" data-name="Exter">
+                <div class="car-image-slider">
+                    <img class="car-image active" src="./img/Exter.jpg" alt="Exter">
+                    <button class="nav-btn prev" onclick="prevImage(this)">❮</button>
+                    <button class="nav-btn next" onclick="nextImage(this)">❯</button>
+                </div>
+                <div class="info">
+                    <h3>Exter</h3>
+                    <p>₹2500/day</p>
+                    <div class="book-btn-wrapper">
+                        <button class="book-btn" onclick="openBookingForm('Exter')">Book Now</button>
                     </div>
                 </div>
             </div>
